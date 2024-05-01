@@ -1,0 +1,316 @@
+workspace "PC-Diseño" {
+!impliedRelationships "false"
+!identifiers "hierarchical"
+
+model {
+    Costumer = person "Costumer" "person who is interested in the application for credit pays for the car" "Costumer"
+    Administrador = person "General Administrator" "Manage and organize functions" "Administrator"
+    Provider = person "Car service provider" "Person who manages a company in the car sales sector." "Provider"
+    Visitor = person "Visitor" "Person who is interested in the application." "Visitor"
+    
+    
+    
+    FinanCar = softwareSystem "FinanCar" "Management and sales application in the car sales sector" "FinanCar" {
+        
+        AndroidApp = container "Android application" "application available on android platform." "" "APP"
+        IOSApp = container "IOS application" "application available on IOS platform." "" "APP"
+        LandingPage = container "Landing Page" "Display of the product from the landing page." "Html, CSS y js" "MobileApps"
+        APIGateway = container "API Gateway" "Connection door between the microservices that exist with the web platforms and applications." "TypeScrip,Node js" "Gateway"
+        AplicacionWeb = container "Aplicación web" "Web platform where different data and information accessible to service providers are managed." "Angular, Html, CSS, js y node js" "MobileApps"
+        
+    
+        DataBase1 = container "Data Base Costumer managment" "Data Base of costumer managment" "mySQL" "DataBase"
+        DataBase2 = container "Data Base Service provider" "Data Base of service provider" "mySQL" "DataBase"
+        DataBase3 = container "Data Base Suscripcion and feedback" "Data Base of suscripcion and feedback" "mySQL" "DataBase"
+        DataBase4 = container "Data Base Booking and travel experience" "Data Base of booking and travel experience" "mySQL" "DataBase"
+        
+        Service1 = container "Costumer Managment" "Management of all activities carried out by the costumer" "TypeScrip,Node js" "Microservices1"{
+            login = component "Login Controller" "Manages and verifies access to the system and database" "" "Component"
+            summary = component "Summary of costumer user accounts Controller" "Collects and stores information about costumers in the application accounts" "" "Component"
+            trip = component "Credit information Controller" "Collects and credit bank information" "" "Component"
+            tracking = component "Route traking Component" "Performs the route tracking process of credit pay" "" "Component"
+            security = component "Security Component" "Collects and verifies the data submitted for the database" "" "Component"
+            incident = component "Incident notification Component" "Carry out the notification process" "" "Component"
+        }
+        Service2 = container "Service provider" "All services offered to providers" "TypeScrip,Node js" "Microservices1"{
+            route = component "Route Controller" "Obtains information about the routes pays car within the application" "" "Component"
+            meal = component "Pay Controller" "Obtains information of the price car within the application" "" "Component"
+            aircraft = component "Process route Component" "Obtain information on process credit and their routes within the application" "" "Component"
+            accommodation = component "Credit Controller" "Obtains information about the credit of bancks within the application" "" "Component"
+            modify = component "Modification and update Component" "Allows the modification of the data that is passed to the database" "" "Component"
+
+        }
+        Service3 = container "Credit and payment" "App credit and payment handling" "TypeScrip,Node js" "Microservices1"{
+            suscripcion = component "Credit Controller" "Request the information required to get credit for an account" "" "Component"
+            feedback = component "Credit Component" "Performs the credit of the application and its costumer payment process" "" "Component"
+            update = component "Update Component" "It is the process of improving the account with the enablement of new functions" "" "Component"
+            payment = component "Payment Component" "Is the payment request process that will be sent to the external system" "" "Component"
+            accounts = component "Accounts Controller" "It is the information stored within the user account that can be improved according to the credit" "" "Component"
+            security = component "Security Component" "Collects and verifies the data submitted for the database" "" "Component"
+        }
+        Service4 = container "Banks and payment plan" "Management of all plan payment of credit within the application" "TypeScrip,Node js" "Microservices1" {
+            booking = component "Banks Controller" "It is the process in which payment plan are made within the application" "" "Component"
+            modify = component "Modify or update payment plan" "It is the process of modifying the payment plan that have been made" "" "Component"
+            notify = component "Notify payment plan" "It is the notification process about the confirmation of the payment plan to the user" "" "Component"
+            security = component "Security Component" "Collects and verifies the data submitted for the database" "" "Component"
+        }
+        
+        
+    }
+    
+    FirebaseCloudMessaging = softwareSystem "Fire Base Cloud Messaging" "Notification sending platform" "ExternalPlataform"
+    Stripe = softwareSystem "Stripe" "As a payment gateway provider" "ExternalPlataform"
+    GoogleMaps = softwareSystem "Google Maps" "Platform for maps and route tracking" "ExternalPlataform"
+    
+
+    Costumer -> FinanCar.AndroidAPP "Uses"
+    Costumer -> FinanCar.IOSApp "Uses"
+    Provider -> FinanCar.AplicacionWeb "Uses"
+    Visitor -> FinanCar.LandingPage "Visualize"
+    Administrador -> FinanCar.AndroidAPP "Manage and supervise"
+    Administrador -> FinanCar.IOSApp "Manage and supervise"
+    Administrador -> FinanCar.LandingPage "Manage and supervise"
+    Administrador -> FinanCar.AplicacionWeb "Manage and supervise"
+
+    FinanCar.APIGateway -> FinanCar.Service1 "Makes API informacion"
+    FinanCar.APIGateway -> FinanCar.Service2 "Makes API informacion"
+    FinanCar.APIGateway -> FinanCar.Service3 "Makes API informacion"
+    FinanCar.APIGateway -> FinanCar.Service4 "Makes API informacion"
+    
+    FinanCar.AplicacionWeb -> FinanCar.APIGateway "Request informacion"
+    
+
+    FinanCar.LandingPage -> FinanCar.IOSApp ""
+    FinanCar.LandingPage -> FinanCar.AndroidApp ""
+    
+    FinanCar.AndroidApp -> FinanCar.APIGateway "Redirects"
+    FinanCar.IOSApp -> FinanCar.APIGateway "Redirects"
+    
+    Administrador -> FinanCar "Manage processes"
+    FinanCar -> Stripe "Send payment request" "External system"
+
+    FinanCar.Service4 -> FinanCar.DataBase4 "Send information on the data base"
+    FinanCar.Service3 -> FinanCar.DataBase3 "Send information on the data base"
+    FinanCar.Service2 -> FinanCar.DataBase2 "Send information on the data base"
+    FinanCar.Service1 -> FinanCar.DataBase1 "Send information on the data base"
+   
+    FinanCar.Service3 -> Stripe "Send nequest of payment" 
+    FinanCar.Service4 -> FirebaseCloudMessaging "Send notification or message"
+    FinanCar.Service1 -> FirebaseCloudMessaging "Send notification or message"
+    FinanCar.Service1 -> GoogleMaps "Send request of map and route information"
+    
+    Stripe -> FinanCar.IOSApp "Send confirmation of payment request"
+    Stripe -> FinanCar.AndroidApp "Send confirmation of payment request"
+    FirebaseCloudMessaging -> FinanCar.AndroidApp "Send notifications and messages"
+    FirebaseCloudMessaging -> FinanCar.IOSApp "Send notifications and messagest"
+    FirebaseCloudMessaging -> FinanCar.AplicacionWeb "Send notifications and messages"
+    GoogleMaps -> FinanCar.IOSApp "Show the requested information"
+    GoogleMaps -> FinanCar.AndroidApp "Show the requested information"
+    
+
+    Visitor -> FinanCar "See the application information"""
+    Costumer -> FinanCar "Uses" ""
+    Provider -> FinanCar "Uses" ""
+    
+    FinanCar -> FirebaseCloudMessaging "Send Notification or message" "External system"
+    FinanCar -> GoogleMaps "Send request of data maps" "External system"
+    
+    FinanCar.APIGateway -> FinanCar.Service1.login "Send information"
+    FinanCar.APIGateway -> FinanCar.Service1.summary "Send information"
+    FinanCar.APIGateway -> FinanCar.Service1.trip "Send information"
+
+    FinanCar.Service1.login -> FinanCar.Service1.security "Uses"
+    FinanCar.Service1.summary -> FinanCar.Service1.security "Uses"
+    FinanCar.Service1.trip -> FinanCar.Service1.incident "Uses"
+    FinanCar.Service1.trip -> FinanCar.Service1.tracking "Uses"
+    
+    FinanCar.Service1.security -> FinanCar.DataBase1 "Send and save information"
+    FinanCar.Service1.tracking -> GoogleMaps "Request information"
+    FinanCar.Service1.incident -> FirebaseCloudMessaging "Request information"
+    
+    
+    FinanCar.APIGateway -> FinanCar.Service2.route "Send information"
+    FinanCar.APIGateway -> FinanCar.Service2.meal "Send information"
+    FinanCar.APIGateway -> FinanCar.Service2.accommodation "Send information"
+
+    FinanCar.Service2.route -> FinanCar.Service2.aircraft "Uses"
+    FinanCar.Service2.route -> FinanCar.Service2.modify "Uses"
+    FinanCar.Service2.meal -> FinanCar.Service2.modify "Uses"
+    FinanCar.Service2.accommodation -> FinanCar.Service2.modify "Uses"
+    
+    FinanCar.Service2.modify -> FinanCar.DataBase2 "Send and save information"
+    
+
+    FinanCar.APIGateway -> FinanCar.Service3.suscripcion "Send information"
+    FinanCar.APIGateway -> FinanCar.Service3.accounts "Send information"
+
+    FinanCar.Service3.accounts -> FinanCar.Service3.feedback "Uses"
+    FinanCar.Service3.update -> FinanCar.Service3.accounts "Uses"
+    FinanCar.Service3.accounts -> FinanCar.Service3.security "Uses"
+    FinanCar.Service3.suscripcion -> FinanCar.Service3.update "Uses"
+    FinanCar.Service3.feedback -> FinanCar.Service3.security "Uses"
+    FinanCar.Service3.suscripcion -> FinanCar.Service3.payment "Uses"
+    
+    FinanCar.Service3.security -> FinanCar.DataBase3 "Send and save information"
+    FinanCar.Service3.payment -> Stripe "Request payment informacion"
+    
+    
+    FinanCar.APIGateway -> FinanCar.Service4.booking "Send information"
+
+    FinanCar.Service4.booking -> FinanCar.Service4.modify "Uses"
+    FinanCar.Service4.booking -> FinanCar.Service4.notify "Uses"
+    FinanCar.Service4.booking -> FinanCar.Service4.security "Uses"
+    FinanCar.Service4.modify -> FinanCar.Service4.security "Uses"
+
+    FinanCar.Service4.security -> FinanCar.DataBase4 "Send and save information"
+    FinanCar.Service4.notify -> FirebaseCloudMessaging "Request information"
+   
+}
+
+views {
+    systemContext FinanCar "Context" "Context Diagram" {
+        include Costumer
+        include Provider
+        include Visitor
+        include Administrador
+        include FinanCar
+        include FirebaseCloudMessaging
+        include Stripe
+        autolayout
+    }
+
+    container FinanCar "Containers" "FinanCar Container View" {
+        
+        include Provider
+        include Administrador
+        include Costumer
+        include Visitor
+        
+        include FinanCar.AndroidApp
+        include FinanCar.IOSApp
+        include FinanCar.Landingpage
+        include FinanCar.AplicacionWeb
+        include FinanCar.APIGateway
+        
+        include FinanCar.Service1
+        include FinanCar.Service2
+        include FinanCar.Service3
+        include FinanCar.Service4
+        
+        
+        include FinanCar.DataBase1
+        include FinanCar.DataBase2
+        include FinanCar.DataBase3
+        include FinanCar.DataBase4
+
+
+        include FirebaseCloudMessaging
+        include Stripe
+        autolayout
+    }
+    
+    component FinanCar.Service1 "Component_microservice_1" {
+        
+        
+        include FinanCar.DataBase1
+        include FinanCar.APIGateway
+        
+        include FinanCar.Service1.tracking
+        include FinanCar.Service1.login
+        include FinanCar.Service1.summary
+        include FinanCar.Service1.trip
+        include FinanCar.Service1.security
+        include FinanCar.Service1.incident
+        
+        include FirebaseCloudMessaging
+
+        autolayout
+    }
+    component FinanCar.Service2 "Component_microservice_2" {
+
+
+        include FinanCar.APIGateway
+        include FinanCar.DataBase2
+        
+        include FinanCar.Service2.aircraft
+        include FinanCar.Service2.route
+        include FinanCar.Service2.meal
+        include FinanCar.Service2.accommodation
+        include FinanCar.Service2.modify
+
+        
+
+        autolayout
+    }
+    component FinanCar.Service3 "Component_microservice_3" {
+        
+        include FinanCar.APIGateway
+        include FinanCar.DataBase3
+        
+        include FinanCar.Service3.suscripcion
+        include FinanCar.Service3.feedback
+        include FinanCar.Service3.update
+        include FinanCar.Service3.payment
+        include FinanCar.Service3.accounts
+        include FinanCar.Service3.security
+        
+        include Stripe
+
+        autolayout
+    }
+    component FinanCar.Service4 "Component_microservice_4" {
+    
+        include FinanCar.APIGateway
+        include FinanCar.DataBase4
+        
+        include FinanCar.Service4.booking
+        include FinanCar.Service4.modify
+        include FinanCar.Service4.notify
+        include FinanCar.Service4.security
+
+        include FirebaseCloudMessaging
+
+        autolayout
+    }
+
+    styles {
+        element "Administrator" {
+            shape "Person"
+            background "#908279"
+            color "#ffffff"
+        }
+
+        element "DataBase" {
+            shape "Cylinder"
+            background "#262d46"
+            color "#ffffff"
+        }
+        element "Person" {
+            shape "Person"
+            background "#767872"
+            color "#ffffff"
+        }
+        element "APP" {
+            shape "MobileDevicePortrait"
+            background "#ecbb5c"
+        }
+        element "MobileApps" {
+            shape "WebBrowser"
+            background "#aeced2"
+        }
+        element "Visitor" {
+            shape "Person"
+            background "#3412de"
+            color "#ffffff"
+        }
+        element "ExternalPlataform"{
+            shape "RoundedBox"
+            background "#ff745f"
+        }
+        element "Gateway"{
+            shape "RoundedBox"
+            background "#8caaa2"
+        }
+    }
+}
+}
